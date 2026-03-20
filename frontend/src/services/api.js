@@ -69,4 +69,76 @@ export const userAPI = {
   deleteAccount: () => api.delete('/users/profile'),
 };
 
+// Admin APIs
+export const adminAPI = {
+  // Dashboard
+  dashboard: {
+    getStats: () => api.get('/admin/dashboard/stats'),
+    getBookingAnalytics: () => api.get('/admin/dashboard/analytics/bookings'),
+    getRevenueAnalytics: (period = 'month') => api.get('/admin/dashboard/analytics/revenue', { params: { period } }),
+    getUserStats: () => api.get('/admin/dashboard/analytics/users'),
+    getSystemHealth: () => api.get('/admin/dashboard/system'),
+  },
+  
+  // Bookings Management
+  bookings: {
+    getAll: (params) => api.get('/admin/bookings', { params }),
+    getStats: () => api.get('/admin/bookings/stats'),
+    create: (data) => api.post('/admin/bookings', data),
+    update: (id, data) => api.put(`/admin/bookings/${id}`, data),
+    updateStatus: (id, status) => api.patch(`/admin/bookings/${id}/status`, { status }),
+    updatePayment: (id, payment_status) => api.patch(`/admin/bookings/${id}/payment`, { payment_status }),
+    delete: (id) => api.delete(`/admin/bookings/${id}`),
+  },
+  
+  // Users Management
+  users: {
+    getAll: (params) => api.get('/admin/users', { params }),
+    getById: (id) => api.get(`/admin/users/${id}`),
+    getStats: () => api.get('/admin/users/stats'),
+    create: (data) => api.post('/admin/users', data),
+    update: (id, data) => api.put(`/admin/users/${id}`, data),
+    changeRole: (id, role) => api.patch(`/admin/users/${id}/role`, { role }),
+    delete: (id) => api.delete(`/admin/users/${id}`),
+  },
+  
+  // Packages Management
+  packages: {
+    getAll: () => api.get('/admin/packages'),
+    getById: (id) => api.get(`/admin/packages/${id}`),
+    getStats: () => api.get('/admin/packages/stats'),
+    create: (data) => api.post('/admin/packages', data),
+    update: (id, data) => api.put(`/admin/packages/${id}`, data),
+    toggleAvailability: (id) => api.patch(`/admin/packages/${id}/availability`),
+    reorder: (package_orders) => api.post('/admin/packages/reorder', { package_orders }),
+    delete: (id) => api.delete(`/admin/packages/${id}`),
+  },
+  
+  // Gallery Management
+  gallery: {
+    getAll: (params) => api.get('/admin/gallery', { params }),
+    getById: (id) => api.get(`/admin/gallery/${id}`),
+    getStats: () => api.get('/admin/gallery/stats'),
+    getCategories: () => api.get('/admin/gallery/categories'),
+    add: (data) => api.post('/admin/gallery', data),
+    bulkUpload: (images) => api.post('/admin/gallery/bulk', { images }),
+    update: (id, data) => api.put(`/admin/gallery/${id}`, data),
+    toggleFeatured: (id) => api.patch(`/admin/gallery/${id}/featured`),
+    reorder: (image_orders) => api.post('/admin/gallery/reorder', { image_orders }),
+    delete: (id) => api.delete(`/admin/gallery/${id}`),
+  },
+  
+  // Villa Management
+  villa: {
+    get: () => api.get('/admin/villa'),
+    getStats: () => api.get('/admin/villa/stats'),
+    update: (data) => api.put('/admin/villa', data),
+    toggleAvailability: () => api.patch('/admin/villa/availability'),
+    addAmenity: (amenity) => api.post('/admin/villa/amenities', { amenity }),
+    removeAmenity: (amenity) => api.delete('/admin/villa/amenities', { data: { amenity } }),
+    addFeature: (feature) => api.post('/admin/villa/features', { feature }),
+    removeFeature: (feature) => api.delete('/admin/villa/features', { data: { feature } }),
+  },
+};
+
 export default api;

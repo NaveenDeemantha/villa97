@@ -1,23 +1,7 @@
-const jwt = require('jsonwebtoken');
+const passport = require('../config/passport');
 
-// Protect routes - verify JWT token
-exports.protect = (req, res, next) => {
-  try {
-    // Get token from header
-    const token = req.header('Authorization')?.replace('Bearer ', '');
-
-    if (!token) {
-      return res.status(401).json({ success: false, message: 'No token, authorization denied' });
-    }
-
-    // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (error) {
-    res.status(401).json({ success: false, message: 'Token is not valid' });
-  }
-};
+// Protect routes - verify JWT token using Passport
+exports.protect = passport.authenticate('jwt', { session: false });
 
 // Legacy middleware (for backward compatibility)
 exports.authMiddleware = exports.protect;

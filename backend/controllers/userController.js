@@ -1,6 +1,7 @@
 const db = require('../config/database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const passport = require('../config/passport');
 
 // Register new user
 exports.register = async (req, res) => {
@@ -46,23 +47,19 @@ exports.register = async (req, res) => {
   }
 };
 
-// Login user
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Check if user exists
-    const result = await db.query('SELECT * FROM users WHERE email = $1', [email]);
-    if (result.rows.length === 0) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+// Login user using Passport Local Strategy
+exports.login = (req, res, next) => {
+  passport.authenticate('local', { session: false }, (err, user, info) => {
+    if (err) {
+      console.error('Error during authentication:', err);
+      return res.status(500).json({ success: false, error: err.message });
     }
 
-    const user = result.rows[0];
-
-    // Verify password
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
-      return res.status(401).json({ success: false, message: 'Invalid credentials' });
+    if (!user) {
+      return res.status(401).json({ 
+        success: false, 
+        message: info?.message || 'Invalid credentials' 
+      });
     }
 
     // Generate JWT token
@@ -72,19 +69,13 @@ exports.login = async (req, res) => {
       { expiresIn: process.env.JWT_EXPIRE || '7d' }
     );
 
-    // Remove password from response
-    delete user.password;
-
     res.json({
       success: true,
       message: 'Login successful',
       token,
       user
     });
-  } catch (error) {
-    console.error('Error logging in:', error);
-    res.status(500).json({ success: false, error: error.message });
-  }
+  })(req, res, next);
 };
 
 // Get user profile

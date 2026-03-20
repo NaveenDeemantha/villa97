@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const passport = require('./config/passport');
 
 // Load environment variables
 dotenv.config();
@@ -11,6 +12,7 @@ const packageRoutes = require('./routes/packageRoutes');
 const galleryRoutes = require('./routes/galleryRoutes');
 const bookingRoutes = require('./routes/bookingRoutes');
 const userRoutes = require('./routes/userRoutes');
+const adminRoutes = require('./routes/admin/adminRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -23,12 +25,16 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Initialize Passport
+app.use(passport.initialize());
+
 // Routes
 app.use('/api/villa', villaInfoRoutes);
 app.use('/api/packages', packageRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {

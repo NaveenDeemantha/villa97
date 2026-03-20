@@ -66,7 +66,22 @@ FRONTEND_URL=http://localhost:3000
 REACT_APP_API_URL=http://localhost:5000/api
 ```
 
-### 4. Run the Application
+### 4. Create Admin User (🆕 New Step)
+
+Create the default admin account for accessing admin features:
+
+```powershell
+cd backend
+npm run seed:admin
+```
+
+**Default Admin Credentials:**
+- Email: `admin@villa97.com`
+- Password: `admin123`
+
+⚠️ **Change the password after first login!**
+
+### 5. Run the Application
 
 **Terminal 1 - Backend:**
 ```powershell
@@ -83,6 +98,7 @@ npm start
 🎉 **Access the app:**
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:5000/api
+- Admin API: http://localhost:5000/api/admin (requires login)
 
 ---
 
@@ -144,7 +160,13 @@ villa97/
 - **✅ Availability Check**: Real-time availability checking for dates
 - **👤 User Profile**: Manage account and view booking history
 - **📱 Responsive Design**: Works seamlessly on all devices
-- **🎯 REST API**: Complete RESTful API with ExpressAPI Endpoints
+- **🎯 REST API**: Complete RESTful API with Express
+- **👨‍💼 Admin Backend**: Complete admin management system (🆕)
+  - Dashboard with analytics and statistics
+  - Booking management and tracking
+  - User management with role-based access
+  - Package and gallery management
+  - Villa information updates
 
 ### Villa
 ```
@@ -191,6 +213,51 @@ DELETE /api/bookings/:id             # Cancel booking
 GET    /api/bookings/user/:id        # Get user bookings
 ```
 
+### Admin API (Protected - Admin Only) 🆕
+```
+# Dashboard & Analytics
+GET    /api/admin/dashboard/stats                - Overview statistics
+GET    /api/admin/dashboard/analytics/bookings   - Booking analytics
+GET    /api/admin/dashboard/analytics/revenue    - Revenue analytics
+GET    /api/admin/dashboard/analytics/users      - User statistics
+GET    /api/admin/dashboard/system               - System health
+
+# Booking Management
+GET    /api/admin/bookings                       - All bookings with filters
+POST   /api/admin/bookings                       - Create booking
+PUT    /api/admin/bookings/:id                   - Update booking
+PATCH  /api/admin/bookings/:id/status            - Update status
+PATCH  /api/admin/bookings/:id/payment           - Update payment
+DELETE /api/admin/bookings/:id                   - Delete booking
+
+# User Management
+GET    /api/admin/users                          - All users
+POST   /api/admin/users                          - Create user
+PUT    /api/admin/users/:id                      - Update user
+PATCH  /api/admin/users/:id/role                 - Change role
+DELETE /api/admin/users/:id                      - Delete user
+
+# Package Management
+GET    /api/admin/packages                       - All packages with stats
+POST   /api/admin/packages                       - Create package
+PUT    /api/admin/packages/:id                   - Update package
+DELETE /api/admin/packages/:id                   - Delete package
+
+# Gallery Management
+GET    /api/admin/gallery                        - All images
+POST   /api/admin/gallery                        - Add image
+POST   /api/admin/gallery/bulk                   - Bulk upload
+PUT    /api/admin/gallery/:id                    - Update image
+DELETE /api/admin/gallery/:id                    - Delete image
+
+# Villa Management
+GET    /api/admin/villa                          - Villa info
+PUT    /api/admin/villa                          - Update villa
+PATCH  /api/admin/villa/availability             - Toggle availability
+```
+
+📖 **Complete Admin API Documentation**: [backend/ADMIN_API.md](backend/ADMIN_API.md)
+
 ---
 
 ## 🗄️ Database Schema
@@ -212,16 +279,26 @@ villa97/
 ├── backend/                    # Node.js + Express API
 │   ├── config/
 │   │   ├── database.js        # PostgreSQL connection
-│   │   └── dbSchema.sql       # Database schema + seed data
+│   │   ├── dbSchema.sql       # Database schema + seed data
+│   │   └── seedAdmin.js       # 🆕 Admin user seeder
 │   ├── controllers/           # Business logic
+│   │   ├── admin/             # 🆕 Admin controllers
+│   │   │   ├── adminDashboardController.js
+│   │   │   ├── adminBookingController.js
+│   │   │   ├── adminUserController.js
+│   │   │   ├── adminPackageController.js
+│   │   │   ├── adminGalleryController.js
+│   │   │   └── adminVillaController.js
 │   │   ├── villaInfoController.js
 │   │   ├── packageController.js
 │   │   ├── galleryController.js
 │   │   ├── bookingController.js
 │   │   └── userController.js
 │   ├── middleware/
-│   │   └── auth.js            # JWT authentication
+│   │   └── auth.js            # JWT + role-based authentication
 │   ├── routes/                # API routes
+│   │   ├── admin/             # 🆕 Admin routes
+│   │   │   └── adminRoutes.js
 │   │   ├── villaInfoRoutes.js
 │   │   ├── packageRoutes.js
 │   │   ├── galleryRoutes.js
@@ -229,6 +306,8 @@ villa97/
 │   │   └── userRoutes.js
 │   ├── server.js              # Express server
 │   ├── package.json
+│   ├── ADMIN_README.md        # 🆕 Admin backend docs
+│   ├── ADMIN_API.md           # 🆕 Complete API docs
 │   └── .env
 │
 └── frontend/                   # React Application
@@ -326,7 +405,8 @@ villa97/
 ### Missing Features (From Proposal)
 - [ ] Google OAuth authentication
 - [ ] Booking.com iCal integration
-- [ ] Admin dashboard interface
+- [x] **Admin dashboard backend** ✅ 
+- [ ] Admin dashboard frontend (UI not implemented yet)
 - [ ] Staff management system
 - [ ] Reviews submission functionality
 - [ ] Real-time notifications
@@ -337,6 +417,8 @@ villa97/
 
 ## 📄 Additional Documentation
 
+- [backend/ADMIN_README.md](backend/ADMIN_README.md) - 🆕 Admin backend documentation
+- [backend/ADMIN_API.md](backend/ADMIN_API.md) - 🆕 Complete admin API reference
 - [REFACTOR_SUMMARY.md](REFACTOR_SUMMARY.md) - Details on architecture changes
 - [PROJECT_COMPARISON_ANALYSIS.md](PROJECT_COMPARISON_ANALYSIS.md) - Proposal comparison
 
